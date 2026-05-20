@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../../../utils/catchAsync";
-import { UserService } from "./user.service";
+import { AuthService } from "./auth.service";
 
 const createUser = catchAsync(async(req: Request, res: Response) =>{
-    const result = await UserService.createUserInDB(req.body);
+    const result = await AuthService.createUserInDB(req.body);
     res.status(200).json({
         success: true,
         message: "User created successfully",
@@ -11,6 +11,6 @@ const createUser = catchAsync(async(req: Request, res: Response) =>{
     });
 })
 
-export const UserController = {
+export const AuthController = {
     createUser,
 }
