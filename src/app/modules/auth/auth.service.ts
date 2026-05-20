@@ -40,7 +40,7 @@ const loginUserInDB = async (payload: { email: string, password: string }) => {
 
     const currentUser = user.rows[0];
 
-    const token = jwt.sign({id: currentUser.id, email: currentUser.email, role: currentUser.role}, config.jwtSecret as string, { expiresIn: config.jwtExpireTime as StringValue });
+    const token = jwt.sign({id: currentUser.id, name: currentUser.name, email: currentUser.email, role: currentUser.role}, config.jwtSecret as string, { expiresIn: config.jwtExpireTime as StringValue });
     return { token, user: currentUser };
 }
 

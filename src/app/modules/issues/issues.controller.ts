@@ -1,0 +1,19 @@
+import { Request, Response } from "express"
+import { catchAsync } from "../../../utils/catchAsync"
+import { IssuesService } from "./issues.service";
+
+const createIssue = catchAsync(async(req: Request, res: Response) =>{
+    console.log("hitting");
+    // const reporter_id = req.user.id;
+
+    // const result = await IssuesService.createIssue(req.body, reporter_id);
+    // res.status(201).json({
+    //     success: true,
+    //     message: "Issue created successfully",
+    //     data: result,
+    // });
+})
+
+export const IssuesController = {
+    createIssue
+}
