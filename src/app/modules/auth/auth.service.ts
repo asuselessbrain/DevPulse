@@ -17,6 +17,27 @@ const createUserInDB = async (payload: IUser) => {
     return user.rows[0];
 }
 
+const loginUserInDB = async(payload: {email: string, password: string}) => {
+    const user = await pool.query(
+        `SELECT * FROM users WHERE email = $1`,
+        [payload.email]
+    );
+
+    if (user.rows.length === 0) {
+        throw new Error("User not found");
+    }
+
+    const isMatch = await bcrypt.compare(payload.password, user.rows[0].password);
+
+    if (!isMatch) {
+        throw new Error("Invalid password");
+    }
+
+    delete user.rows[0].password;
+    return user.rows[0];
+}
+
 export const AuthService = {
     createUserInDB,
+    loginUserInDB,
 }
