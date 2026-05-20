@@ -1,5 +1,6 @@
 import { config } from "../../config";
 import { pool } from "../../db";
+import AppError from "../../errors/AppError";
 import { IUser } from "./user.interface";
 import bcrypt from "bcrypt";
 
@@ -24,13 +25,13 @@ const loginUserInDB = async(payload: {email: string, password: string}) => {
     );
 
     if (user.rows.length === 0) {
-        throw new Error("User not found");
+        throw new AppError("User not found", 404);
     }
 
     const isMatch = await bcrypt.compare(payload.password, user.rows[0].password);
 
     if (!isMatch) {
-        throw new Error("Invalid password");
+        throw new AppError("Invalid password", 400);
     }
 
     delete user.rows[0].password;
