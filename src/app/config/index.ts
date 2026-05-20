@@ -6,5 +6,7 @@ dotenv.config({path: path.join(process.cwd(), ".env")});
 export const config = {
   port: process.env.PORT || 3000,
   dbUrl: process.env.DB_URL || "",
-  saltRounds: process.env.SALTROUNDS ? parseInt(process.env.SALTROUNDS) : 10
+  saltRounds: process.env.SALTROUNDS ? parseInt(process.env.SALTROUNDS) : 10,
+  jwtSecret: process.env.TOKEN_SECRET || "",
+  jwtExpireTime: process.env.TOKEN_EXPIRETIME || "1h",
 };
