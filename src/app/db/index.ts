@@ -17,6 +17,19 @@ export const initDB = async () => {
                 created_at TIMESTAMP DEFAULT NOW(),
                 updated_at TIMESTAMP DEFAULT NOW()
             )`)
+
+            await pool.query(`
+                    CREATE TABLE IF NOT EXISTS issues(
+                        id SERIAL PRIMARY KEY NOT NULL,
+                        title VARCHAR(255) NOT NULL,
+                        description TEXT,
+                        issues VARCHAR(50) NOT NULL CHECK (issues IN ('bug', 'feature_request')),
+                        status VARCHAR(50) NOT NULL CHECK (status IN ('open', 'in_progress', 'resolved')),
+                        reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                        created_at TIMESTAMP DEFAULT NOW(),
+                        updated_at TIMESTAMP DEFAULT NOW()
+                    )
+                `)
     } catch (error) {
         console.log(error);
     }
