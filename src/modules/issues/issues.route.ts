@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { IssuesController } from "./issues.controller";
-import auth from "../../middleware/auth";
 import { UserRole } from "../auth/user.interface";
+import auth from "../../middleware/auth";
 
 const router = Router();
 

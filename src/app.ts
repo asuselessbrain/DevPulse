@@ -1,9 +1,9 @@
 import express, { Application, Request, Response } from 'express';
 import cors from "cors";
-import { AuthRouter } from './app/modules/auth/auth.route';
-import { IssuesRouter } from './app/modules/issues/issues.route';
-import globalErrorHandler from './app/errors/globalErrorHandler';
-import notFound from './app/errors/notFound';
+import globalErrorHandler from './errors/globalErrorHandler';
+import notFound from './errors/notFound';
+import { AuthRouter } from './modules/auth/auth.route';
+import { IssuesRouter } from './modules/issues/issues.route';
 
 const app:Application = express();
 

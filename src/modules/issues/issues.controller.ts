@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
-import { catchAsync } from "../../../utils/catchAsync"
 import { IssuesService } from "./issues.service";
+import { catchAsync } from "../../utils/catchAsync";
 
 const createIssue = catchAsync(async(req: Request, res: Response) =>{
     const reporter_id = req.user?.id;

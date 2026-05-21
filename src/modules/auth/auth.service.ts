@@ -1,10 +1,10 @@
-import { config } from "../../config";
-import { pool } from "../../db";
-import AppError from "../../errors/AppError";
 import { IUser } from "./user.interface";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import type { StringValue } from 'ms';
+import { config } from "../../config";
+import { pool } from "../../db";
+import AppError from "../../errors/AppError";
 
 const createUserInDB = async (payload: IUser) => {
 

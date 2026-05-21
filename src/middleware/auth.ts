@@ -6,10 +6,10 @@ import { pool } from "../db";
 import { Role } from "../modules/auth/user.interface";
 
 const auth = (...roles: Role[]) => {
-    return async(req: Request, res: Response, next: NextFunction) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
         const token = req.headers.authorization
 
-        if(!token){
+        if (!token) {
             throw new AppError("Unauthorized", 401);
         }
 
@@ -26,18 +26,18 @@ const auth = (...roles: Role[]) => {
             [decoded.id]
         )
 
-        if(isUserExist.rows.length === 0){
+        if (isUserExist.rows.length === 0) {
             throw new AppError("User not found", 404);
         }
 
-        if(roles.length && !roles.includes(isUserExist.rows[0].role)){
+        if (roles.length && !roles.includes(isUserExist.rows[0].role)) {
             throw new AppError("Forbidden Access!", 403)
         }
 
         req.user = decoded
 
 
-        next(); 
+        next();
     }
 
 }
