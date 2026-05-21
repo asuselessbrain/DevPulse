@@ -3,8 +3,9 @@ import AppError from "../errors/AppError"
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { config } from "../config";
 import { pool } from "../db";
+import { Role } from "../modules/auth/user.interface";
 
-const auth = (...roles: string[]) => {
+const auth = (...roles: Role[]) => {
     return async(req: Request, res: Response, next: NextFunction) => {
         const token = req.headers.authorization
 

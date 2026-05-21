@@ -12,6 +12,24 @@ const createIssue = async (payload: IIssue, reporter_id: string) => {
     return issue.rows[0];
 }
 
+const getAllIssuesFromDB = async () =>{
+    const issues = await pool.query(
+        `SELECT * FROM issues`
+    )
+
+    const issueWithOutReporter = issues.rows
+
+    const issueWithReporter = await Promise.all(issueWithOutReporter.map(async (issue) => {
+        const reporter = await pool.query(
+            `SELECT id, name, role FROM users WHERE id = $1`,
+            [issue.reporter_id]
+        )
+        return { ...issue, reporter: reporter.rows[0] };
+    }))
+    return issueWithReporter;
+}
+
 export const IssuesService = {
     createIssue,
+    getAllIssuesFromDB,
 }
