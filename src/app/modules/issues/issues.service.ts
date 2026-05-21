@@ -1,5 +1,6 @@
 import { pool } from "../../db";
 import AppError from "../../errors/AppError";
+import { UserRole } from "../auth/user.interface";
 import { IIssue } from "./issues.interface";
 
 const createIssue = async (payload: IIssue, reporter_id: string) => {
@@ -74,6 +75,37 @@ const getSingleIssueFromDB = async (id: string) => {
     return { ...issue.rows[0], reporter: reporter.rows[0] };
 }
 
+const updateIssueInDB = async (id: string, payload: Partial<IIssue>, user_role: string, user_id: string) => {
+    const { title, description, type } = payload;
+
+    const isUserExist = await pool.query(
+        `SELECT * FROM issues WHERE id = $1`,
+        [id]
+    )
+
+    if(isUserExist.rows.length === 0){
+        throw new AppError("Issue not found", 404);
+    }
+
+    if(user_role !== UserRole.maintainer && user_id !== isUserExist.rows[0].reporter_id){
+        throw new AppError("You are not allowed to update this issue", 403);
+    }
+    
+    const issue = await pool.query(
+        `UPDATE issues SET title = COALESCE($1, title), description = COALESCE($2, description), type = COALESCE($3, type), updated_at = NOW() WHERE id = $4 RETURNING *`,
+        [title, description, type, id]
+    )
+
+    const reporter = await pool.query(
+        `SELECT id, name, role FROM users WHERE id = $1`,
+        [issue.rows[0].reporter_id]
+    )
+
+    delete issue.rows[0].reporter_id;
+
+    return { ...issue.rows[0], reporter: reporter.rows[0] };
+}
+
 const deleteIssueFromDB = async (id: string) => {
     const issue = await pool.query(
         `DELETE FROM issues WHERE id = $1 RETURNING *`,
@@ -98,5 +130,6 @@ export const IssuesService = {
     createIssue,
     getAllIssuesFromDB,
     getSingleIssueFromDB,
+    updateIssueInDB,
     deleteIssueFromDB
 }

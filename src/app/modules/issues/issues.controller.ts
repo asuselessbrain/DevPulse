@@ -32,6 +32,20 @@ const getIssueById = catchAsync(async(req: Request, res: Response) =>{
     });
 })
 
+const updateIssue = catchAsync(async(req: Request, res: Response) =>{
+    const issue_id = req.params.id;
+
+    const user_role = req.user?.role;
+    const user_id = req.user?.id;
+    const result = await IssuesService.updateIssueInDB(issue_id as string, req.body, user_role as string, user_id as string);
+
+    res.status(200).json({
+        success: true,
+        message: "Issue updated successfully",
+        data: result,
+    });
+})
+
 const deleteIssue = catchAsync(async(req: Request, res: Response) =>{
     const issue_id = req.params.id;
     const result = await IssuesService.deleteIssueFromDB(issue_id as string);
@@ -47,5 +61,6 @@ export const IssuesController = {
     createIssue,
     getAllIssues,
     getIssueById,
+    updateIssue,
     deleteIssue
 }
