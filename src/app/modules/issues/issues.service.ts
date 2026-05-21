@@ -1,4 +1,5 @@
 import { pool } from "../../db";
+import AppError from "../../errors/AppError";
 import { IIssue } from "./issues.interface";
 
 const createIssue = async (payload: IIssue, reporter_id: string) => {
@@ -17,19 +18,19 @@ const getAllIssuesFromDB = async (query: Record<string, unknown>) => {
     let sqlQuery = `SELECT * FROM issues WHERE 1=1`;
     let value: any[] = []
 
-    if(query.status){
+    if (query.status) {
         sqlQuery += ` AND status = $${value.length + 1}`;
         value.push(query.status);
     }
 
-    if(query.type){
+    if (query.type) {
         sqlQuery += ` AND type = $${value.length + 1}`;
         value.push(query.type);
     }
 
     let sortOrder = 'DESC';
-    
-    if(query.sort === "oldest"){
+
+    if (query.sort === "oldest") {
         sortOrder = "ASC";
     }
 
@@ -53,7 +54,28 @@ const getAllIssuesFromDB = async (query: Record<string, unknown>) => {
     return issueWithReporter;
 }
 
+const getSingleIssueFromDB = async (id: string) => {
+    const issue = await pool.query(
+        `SELECT * FROM issues WHERE id = $1`,
+        [id]
+    )
+
+    if (issue.rows.length === 0) {
+        throw new AppError("Issue not found", 404);
+    }
+
+    const reporter = await pool.query(
+        `SELECT id, name, role FROM users WHERE id = $1`,
+        [issue.rows[0].reporter_id]
+    )
+
+    delete issue.rows[0].reporter_id;
+
+    return { ...issue.rows[0], reporter: reporter.rows[0] };
+}
+
 export const IssuesService = {
     createIssue,
     getAllIssuesFromDB,
+    getSingleIssueFromDB
 }
