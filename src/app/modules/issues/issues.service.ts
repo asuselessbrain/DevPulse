@@ -74,8 +74,29 @@ const getSingleIssueFromDB = async (id: string) => {
     return { ...issue.rows[0], reporter: reporter.rows[0] };
 }
 
+const deleteIssueFromDB = async (id: string) => {
+    const issue = await pool.query(
+        `DELETE FROM issues WHERE id = $1 RETURNING *`,
+        [id]
+    )
+
+    if (issue.rows.length === 0) {
+        throw new AppError("Issue not found", 404);
+    }
+
+    const reporter = await pool.query(
+        `SELECT id, name, role FROM users WHERE id = $1`,
+        [issue.rows[0].reporter_id]
+    )
+
+    delete issue.rows[0].reporter_id;
+
+    return { ...issue.rows[0], reporter: reporter.rows[0] };
+}
+
 export const IssuesService = {
     createIssue,
     getAllIssuesFromDB,
-    getSingleIssueFromDB
+    getSingleIssueFromDB,
+    deleteIssueFromDB
 }
