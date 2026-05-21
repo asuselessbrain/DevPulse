@@ -12,9 +12,33 @@ const createIssue = async (payload: IIssue, reporter_id: string) => {
     return issue.rows[0];
 }
 
-const getAllIssuesFromDB = async () =>{
+const getAllIssuesFromDB = async (query: Record<string, unknown>) => {
+
+    let sqlQuery = `SELECT * FROM issues WHERE 1=1`;
+    let value: any[] = []
+
+    if(query.status){
+        sqlQuery += ` AND status = $${value.length + 1}`;
+        value.push(query.status);
+    }
+
+    if(query.type){
+        sqlQuery += ` AND type = $${value.length + 1}`;
+        value.push(query.type);
+    }
+
+    let sortOrder = 'DESC';
+    
+    if(query.sort === "oldest"){
+        sortOrder = "ASC";
+    }
+
+    sqlQuery += ` ORDER BY created_at ${sortOrder}`;
+
+
     const issues = await pool.query(
-        `SELECT * FROM issues`
+        sqlQuery,
+        value
     )
 
     const issueWithOutReporter = issues.rows

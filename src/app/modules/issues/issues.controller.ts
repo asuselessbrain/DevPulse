@@ -14,7 +14,7 @@ const createIssue = catchAsync(async(req: Request, res: Response) =>{
 })
 
 const getAllIssues = catchAsync(async(req: Request, res: Response) =>{
-    const result = await IssuesService.getAllIssuesFromDB();
+    const result = await IssuesService.getAllIssuesFromDB(req.query);
     res.status(200).json({
         success: true,
         message: "Issues retrieved successfully",
